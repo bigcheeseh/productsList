@@ -1,0 +1,44 @@
+image: node:10.15.0
+
+cache:
+  paths:
+  - node_modules/
+
+stages:
+  - develop
+  - production
+  - release
+
+develop_deploy:
+  stage: develop
+  tags: 
+   - develop
+  script:
+   - npm install
+   - npm run build
+   - rm -rf /var/www/clipdev.8th-byte.cf/html/*
+   - cp -r build/. /var/www/clipdev.8th-byte.cf/html
+  only:
+   - develop
+
+release_deploy:
+  stage: release
+  tags: [release]
+  script:
+   - npm install
+   - npm run build
+   - rm -rf /var/www/cliprelease.8th-byte.cf/html/*
+   - cp -r build/. /var/www/cliprelease.8th-byte.cf/html
+  only:
+   - release
+   
+production_deploy:
+  stage: production
+  tags: [master]
+  script:
+   - npm install
+   - npm run build
+   - rm -rf /var/www/clipprod.8th-byte.cf/html/*
+   - cp -r build/. /var/www/clipprod.8th-byte.cf/html
+  only:
+   - master
